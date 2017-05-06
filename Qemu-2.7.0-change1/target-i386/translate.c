@@ -68,21 +68,24 @@ bool ssflag = false;
 #include <time.h>
 #include <string.h>
 #include <fcntl.h>
+#include <sys/time.h>
 char * PATH_call ="/home/yc/CAS/test.log";
 void printf_debug(char *Path,
                   int DebugAllow, signed int NeedData) 
 {
     if (DebugAllow == 0) 
         return ;
+    struct timeval tt;
     struct tm* p;
     time_t timep;
     time(&timep);
     p = gmtime(&timep);
+    gettimeofday(&tt,NULL);
     char s[500] = "";
     int fd = open(Path,O_RDWR | O_CREAT | O_APPEND,
                   S_IRUSR | S_IWUSR );
-    sprintf(s, "pc  is  %x time is %d/%d/%d %d:%d:%d \n",NeedData,(1900+p->tm_year),(1+p->tm_mon),p->tm_mday,
-p->tm_hour,p->tm_min,p->tm_sec);
+    sprintf(s, "pc is 0x%x time is %d/%d/%d %d:%d:%d-:%d\n",NeedData,(1900+p->tm_year),(1+p->tm_mon),p->tm_mday,
+p->tm_hour,p->tm_min,p->tm_sec,tt.tv_usec);
     write(fd,s,strlen(s));
 //    printf("sizeofs id %d\n",sizeof(s));
     close(fd);
