@@ -1,3 +1,3 @@
 # qemu-dl
-### this a homework
+### this is a homework
 * record the pc ...
