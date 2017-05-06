@@ -58,6 +58,9 @@
 #endif
 
 /******************************mycode start***************************/
+
+int sflag = 0;
+bool ssflag = false;
 //#include "my_debug.h"
 
 #include <stdio.h>
@@ -65,7 +68,7 @@
 #include <time.h>
 #include <string.h>
 #include <fcntl.h>
-char * PATH_call ="/home/yc/CAS/call.log";
+char * PATH_call ="/home/yc/CAS/test.log";
 void printf_debug(char *Path,
                   int DebugAllow, signed int NeedData) 
 {
@@ -78,12 +81,10 @@ void printf_debug(char *Path,
     char s[500] = "";
     int fd = open(Path,O_RDWR | O_CREAT | O_APPEND,
                   S_IRUSR | S_IWUSR );
-/*    sprintf(s+strlen(s), "%d/%d/%d/ %d:%d:%d \n",
-                (1900+p->tm_year),(1+p->tm_mon),p->tm_mday,
-                 p->tm_hour, p->tm_min,  p->tm_sec);
-*/
-    sprintf(s+strlen(s), "callip is  %x time is %d:%d:%d \n",NeedData,p->tm_hour,p->tm_min,p->tm_sec);
-    write(fd,s,sizeof(s));
+    sprintf(s, "pc  is  %x time is %d/%d/%d %d:%d:%d \n",NeedData,(1900+p->tm_year),(1+p->tm_mon),p->tm_mday,
+p->tm_hour,p->tm_min,p->tm_sec);
+    write(fd,s,strlen(s));
+//    printf("sizeofs id %d\n",sizeof(s));
     close(fd);
 }
 
@@ -4377,10 +4378,8 @@ static target_ulong disas_insn(CPUX86State *env, DisasContext *s,
     int modrm, reg, rm, mod, op, opreg, val;
     target_ulong next_eip, tval;
     int rex_w, rex_r;
-
-#ifdef TRANSLATE
-       printf_debug(PATH_call,1,0x1234);   // yc 
-#endif
+    if (ssflag)
+        printf_debug(PATH_call,1,pc_start);   // yc print 
     s->pc_start = s->pc = pc_start;
     prefixes = 0;
     s->override = -1;
@@ -6849,8 +6848,17 @@ static target_ulong disas_insn(CPUX86State *env, DisasContext *s,
 //#ifdef WANT_ICEBP
     case 0xf1: /* icebp (undocumented, exits to external debugger) */    //yc
         
-        printf("$$$$$$$$$$$$$$$$$\n");
         printf("i am test new ins\n");
+        sflag ++ ;
+        if(sflag > 65535)
+            sflag  = 0 ;
+        if (sflag % 2 == 0)
+            ssflag = true;
+        else
+            ssflag = false;
+        printf("the sflag is %d\n",sflag);
+        printf("the ssflag is %s\n",ssflag==false?"false":"ture");
+        
 //        gen_svm_check_intercept(s, pc_start, SVM_EXIT_ICEBP);
 //#if 1
 //        gen_debug(s, pc_start - s->cs_base);
@@ -8353,7 +8361,7 @@ void gen_intermediate_code(CPUX86State *env, TranslationBlock *tb)
             gen_io_start();
         }
 
-        pc_ptr = disas_insn(env, dc, pc_ptr);
+        pc_ptr = disas_insn(env, dc, pc_ptr);     //  disas_insn yc 
         /* stop translation if indicated */
         if (dc->is_jmp)
             break;
