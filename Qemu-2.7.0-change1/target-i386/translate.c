@@ -56,11 +56,10 @@
 # define ctztl  ctz32
 # define clztl  clz32
 #endif
+// yc 
 
 /******************************mycode start***************************/
 
-int sflag = 0;
-bool ssflag = false;
 //#include "my_debug.h"
 
 #include <stdio.h>
@@ -69,10 +68,30 @@ bool ssflag = false;
 #include <string.h>
 #include <fcntl.h>
 #include <sys/time.h>
-char * PATH_call ="/home/yc/CAS/test.log";
-void printf_debug(char *Path,
-                  int DebugAllow, signed int NeedData) 
+//char * PATH ="/home/yc/CAS/log/";
+
+# define debugallow  1
+# define update_yc  1
+# define old_yc 0 
+
+//#ifdef update_yc 
+char *PATH= "/home/yc/CAS/log/";
+//#endif
+
+#if 0
+char * PATH_call ="/home/yc/CAS/log/test.log";
+char * PATH_eflag ="/home/yc/CAS/log/eflag.log";
+#endif
+
+int sflag = 0;
+bool ssflag = false;
+
+void GetTimeYC(void);
+void itoa (int n,char s[]); // int to char 
+void printf_debug(const char *Path,
+                  int DebugAllow, signed int NeedData, char* name,int num) 
 {
+    int error; 
     if (DebugAllow == 0) 
         return ;
     struct timeval tt;
@@ -82,14 +101,67 @@ void printf_debug(char *Path,
     p = gmtime(&timep);
     gettimeofday(&tt,NULL);
     char s[500] = "";
-    int fd = open(Path,O_RDWR | O_CREAT | O_APPEND,
+
+    char *Temp = NULL;
+    char str[25];
+    //Temp = (char*)malloc(sizeof(char)*1024);
+    Temp = (char*)calloc(1024,sizeof(char*));
+    itoa(num,str);
+    strcat (Temp,Path);
+    strcat (Temp,name);
+    strcat (Temp,"_");
+    strcat (Temp,str);
+    strcat (Temp,".log");
+    printf("path is %s\n",Temp);
+
+    int fd = open(Temp,O_RDWR | O_CREAT | O_APPEND,
                   S_IRUSR | S_IWUSR );
-    sprintf(s, "pc is 0x%x time is %d/%d/%d %d:%d:%d-:%d\n",NeedData,(1900+p->tm_year),(1+p->tm_mon),p->tm_mday,
+//    printf(" start writing..... time is %d/%d/%d %d:%d:%d:%ld\n",(1900+p->tm_year),(1+p->tm_mon),p->tm_mday,
+//p->tm_hour,p->tm_min,p->tm_sec,tt.tv_usec);
+    sprintf(s, "%s is 0x%x time is %d/%d/%d %d:%d:%d:%ld\n",name,NeedData,(1900+p->tm_year),(1+p->tm_mon),p->tm_mday,
 p->tm_hour,p->tm_min,p->tm_sec,tt.tv_usec);
-    write(fd,s,strlen(s));
-//    printf("sizeofs id %d\n",sizeof(s));
+    error = write(fd,s,strlen(s));
+    if (error == 0){
+        printf("[error]: write file error");
+        return;
+    }
+//    printf(" write success..... time is %d/%d/%d %d:%d:%d:%ld\n",(1900+p->tm_year),(1+p->tm_mon),p->tm_mday,
+//p->tm_hour,p->tm_min,p->tm_sec,tt.tv_usec);
+
+    free(Temp);
+    Temp = NULL;
     close(fd);
 }
+void GetTimeYC(void)
+{
+
+    struct timeval tt;
+    struct tm* p;
+    time_t timep;
+    time(&timep);
+    p = gmtime(&timep);
+    gettimeofday(&tt,NULL);
+    printf("time is %d/%d/%d %d:%d:%d:%ld\n",(1900+p->tm_year),(1+p->tm_mon),p->tm_mday,
+p->tm_hour,p->tm_min,p->tm_sec,tt.tv_usec);
+}
+
+void itoa (int n,char s[])
+{
+int i,j,sign;
+if((sign=n)<0)//记录符号
+n=-n;//使n成为正数
+i=0;
+do{
+      s[i++]=n%10+'0';//取下一个数字
+}
+while ((n/=10)>0);//删除该数字
+if(sign<0)
+s[i++]='-';
+s[i]='\0';
+for(j=i;j>=0;j--)//生成的数字是逆序的，所以要逆序输出
+     ; // printf("%c",s[j]);
+}
+//#endif
 
 /******************************mycode end***************************/
 
@@ -2739,7 +2811,8 @@ static const SSEFunc_0_epp sse_op_table1[256][4] = {
     [0xf0] = { NULL, NULL, NULL, SSE_SPECIAL }, /* lddqu */
   //  [0xf1] = MMX_OP2(psllw),    //yc
     [0xf1] = MMX_OP2(psubsb),    // change by chao 
-    [0xf2] = MMX_OP2(pslld),
+    [0xf2] = MMX_OP2(pslld),     // yc 
+   // [0xf2] = MMX_OP2(psubsb),     // yc 
     [0xf3] = MMX_OP2(psllq),
     [0xf4] = MMX_OP2(pmuludq),
     [0xf5] = MMX_OP2(pmaddwd),
@@ -4381,8 +4454,38 @@ static target_ulong disas_insn(CPUX86State *env, DisasContext *s,
     int modrm, reg, rm, mod, op, opreg, val;
     target_ulong next_eip, tval;
     int rex_w, rex_r;
-    if (ssflag)
-        printf_debug(PATH_call,1,pc_start);   // yc print 
+    if (ssflag){
+
+        printf_debug(PATH,1,pc_start,"PC_start",(int)(sflag/2));   // yc  pc
+        printf_debug(PATH,1,env->eflags,"eflags",(int)(sflag/2));  // yc eflags  
+        printf_debug(PATH,1,env->eip,"eip",(int)(sflag/2));  // yc eip 
+        /* cr[5]*/
+        printf_debug(PATH,1,(int)env->cr[0],"cr0",(int)(sflag/2));  // yc cr[5] 
+        printf_debug(PATH,1,(int)env->cr[2],"cr2",(int)(sflag/2));  // yc  
+        printf_debug(PATH,1,(int)env->cr[3],"cr3",(int)(sflag/2));  // yc  
+        printf_debug(PATH,1,(int)env->cr[4],"cr4",(int)(sflag/2));  // yc  
+        /* bnd[4]*/
+#if 0
+        printf_debug(PATH,1,(int)env->bnd_regs[0],"bnd_reg0",(int)(sflag/2));  // yc  
+        printf_debug(PATH,1,(int)env->bnd_regs[1],"bnd_reg1",(int)(sflag/2));  // yc  
+        printf_debug(PATH,1,(int)env->bnd_regs[2],"bnd_reg2",(int)(sflag/2));  // yc  
+        printf_debug(PATH,1,(int)env->bnd_regs[3],"bnd_reg3",(int)(sflag/2));  // yc  
+#endif
+        /* msr_global_status*/
+        printf_debug(PATH,1,env->msr_global_status,"msr_global_status",(int)(sflag/2));  // yc  
+
+        /* cpuid level */
+        printf_debug(PATH,1,env->cpuid_level,"cpuid_level",(int)(sflag/2));  // yc  
+
+        /* mcg_status */
+        printf_debug(PATH,1,env->mcg_status,"mcg_status",(int)(sflag/2)); // yc  
+        }
+
+#if 0
+        printf_debug(PATH_call,1,pc_start,"pc");   // yc  pc
+        printf_debug(PATH_eflag,1,env->eflags,"eflags");}  // yc eflags  
+#endif
+
     s->pc_start = s->pc = pc_start;
     prefixes = 0;
     s->override = -1;
@@ -4404,7 +4507,7 @@ static target_ulong disas_insn(CPUX86State *env, DisasContext *s,
     case 0xf3:
         prefixes |= PREFIX_REPZ;
         goto next_byte;
-    case 0xf2:
+    case 0xf2:                                   // yc  
         prefixes |= PREFIX_REPNZ;
         goto next_byte;
     case 0xf0:
@@ -6188,7 +6291,7 @@ static target_ulong disas_insn(CPUX86State *env, DisasContext *s,
             gen_cmps(s, ot);
         }
         break;
-    case 0x6c: /* insS */
+    case 0x6c: /* insS */          // ycins
     case 0x6d:
         ot = mo_b_d32(b, dflag);
         tcg_gen_ext16u_tl(cpu_T0, cpu_regs[R_EDX]);
@@ -6382,9 +6485,10 @@ static target_ulong disas_insn(CPUX86State *env, DisasContext *s,
            // printf("###############################\n");
            // printf("the file is translate.c\n");
           //  printf("call next_ip is %x\n",next_eip);
-
+        if (ssflag){
+        printf_debug(PATH,1,next_eip,"call_im",(int)(sflag/2));}  // yc  
 #ifdef DEBUG_QEMU_TRANS_NODE
-            printf_debug(PATH_call,1,next_eip);   // yc 
+            printf_debug(PATH,1,next_eip);   // yc 
 #endif
 
             if (dflag == MO_16) {
@@ -6410,6 +6514,8 @@ static target_ulong disas_insn(CPUX86State *env, DisasContext *s,
 
             tcg_gen_movi_tl(cpu_T0, selector);
             tcg_gen_movi_tl(cpu_T1, offset);
+            if(ssflag){ 
+            printf_debug(PATH,1,offset,"lcall_im",(int)(sflag/2));}  // yc  
         }
         goto do_lcall;
     case 0xe9: /* jmp im */
@@ -6426,6 +6532,8 @@ static target_ulong disas_insn(CPUX86State *env, DisasContext *s,
         }
         gen_bnd_jmp(s);
         gen_jmp(s, tval);
+        if (ssflag){
+        printf_debug(PATH,1,tval,"jmp_im",(int)(sflag/2));}  // yc  
         break;
     case 0xea: /* ljmp im */
         {
@@ -6439,6 +6547,8 @@ static target_ulong disas_insn(CPUX86State *env, DisasContext *s,
 
             tcg_gen_movi_tl(cpu_T0, selector);
             tcg_gen_movi_tl(cpu_T1, offset);
+            if (ssflag){ 
+            printf_debug(PATH,1,offset,"ljmp_im",(int)(sflag/2));}  // yc  
         }
         goto do_ljmp;
     case 0xeb: /* jmp Jb */
@@ -6850,28 +6960,51 @@ static target_ulong disas_insn(CPUX86State *env, DisasContext *s,
         break;
 //#ifdef WANT_ICEBP
     case 0xf1: /* icebp (undocumented, exits to external debugger) */    //yc
-        
-        printf("i am test new ins\n");
+#if 1
+        GetTimeYC(); 
+        printf("hello world !!!!!\n");                                        // addtime
         sflag ++ ;
         if(sflag > 65535)
             sflag  = 0 ;
-        if (sflag % 2 == 0)
+        if (sflag % 2 == 1)
             ssflag = true;
         else
             ssflag = false;
         printf("the sflag is %d\n",sflag);
         printf("the ssflag is %s\n",ssflag==false?"false":"ture");
-        
-//        gen_svm_check_intercept(s, pc_start, SVM_EXIT_ICEBP);
-//#if 1
-//        gen_debug(s, pc_start - s->cs_base);
-//#else
-        /* start debug */
-//        tb_flush(CPU(x86_env_get_cpu(env)));
-//        qemu_set_log(CPU_LOG_INT | CPU_LOG_TB_IN_ASM);
-//#endif
         break;
-//#endif
+#endif
+#if 0
+        gen_svm_check_intercept(s, pc_start, SVM_EXIT_ICEBP);
+#if 1
+        gen_debug(s, pc_start - s->cs_base);
+#else
+        /* start debug */
+        tb_flush(CPU(x86_env_get_cpu(env)));
+        qemu_set_log(CPU_LOG_INT | CPU_LOG_TB_IN_ASM);
+#endif
+        break;
+#endif
+//#endif 
+
+/***********************************************************************/
+/*  add my own insn to save the information   GIOC  get information of cpu */
+#if 0 
+     case 0x166: /* GIOC (save information of cpu) */    //yc
+        
+        printf(" I AM GIOC!!!!!\n");
+        sflag ++ ;
+        if(sflag > 65535)
+            sflag  = 0 ;
+        if (sflag % 2 == 1)
+            ssflag = true;
+        else
+            ssflag = false;
+        printf("the sflag is %d\n",sflag);
+        printf("the ssflag is %s\n",ssflag==false?"false":"ture");
+#endif
+/***********************************************************************/
+        
     case 0xfa: /* cli */
         if (!s->vm86) {
             if (s->cpl <= s->iopl) {
@@ -8129,7 +8262,9 @@ static target_ulong disas_insn(CPUX86State *env, DisasContext *s,
     case 0x110 ... 0x117:
     case 0x128 ... 0x12f:
     case 0x138 ... 0x13a:
-    case 0x150 ... 0x179:
+    //case 0x150 ... 0x179:   yc 
+    case 0x150 ... 0x165:
+    case 0x167 ... 0x179:
     case 0x17c ... 0x17f:
     case 0x1c2:
     case 0x1c4 ... 0x1c6:
