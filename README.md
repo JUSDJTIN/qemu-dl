@@ -16,7 +16,6 @@
   * 文件命名规则:messagename_num.log
   * messagename:是所需记录的信息
   * num:是第几次进行记录(从0开始)
-  *** 
+  *** 
   ### bugs:
-  
-  * 在windows有时会执行　icebp　指令，触发记录信息函数，目前还没发现为什么windows会在正常运行时执行这条命令．请见谅
+ * 在windows有时会执行　icebp　指令，触发记录信息函数，目前还没发现为什么windows会在正常运行时执行这条命令．请见谅
