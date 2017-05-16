@@ -112,14 +112,14 @@ void printf_debug(const char *Path,
     strcat (Temp,"_");
     strcat (Temp,str);
     strcat (Temp,".log");
-    printf("path is %s\n",Temp);
+//    printf("path is %s\n",Temp);
 
     int fd = open(Temp,O_RDWR | O_CREAT | O_APPEND,
                   S_IRUSR | S_IWUSR );
 //    printf(" start writing..... time is %d/%d/%d %d:%d:%d:%ld\n",(1900+p->tm_year),(1+p->tm_mon),p->tm_mday,
 //p->tm_hour,p->tm_min,p->tm_sec,tt.tv_usec);
     sprintf(s, "%s is 0x%x time is %d/%d/%d %d:%d:%d:%ld\n",name,NeedData,(1900+p->tm_year),(1+p->tm_mon),p->tm_mday,
-p->tm_hour,p->tm_min,p->tm_sec,tt.tv_usec);
+(p->tm_hour+8)%24,p->tm_min,p->tm_sec,tt.tv_usec);
     error = write(fd,s,strlen(s));
     if (error == 0){
         printf("[error]: write file error");
@@ -142,7 +142,7 @@ void GetTimeYC(void)
     p = gmtime(&timep);
     gettimeofday(&tt,NULL);
     printf("time is %d/%d/%d %d:%d:%d:%ld\n",(1900+p->tm_year),(1+p->tm_mon),p->tm_mday,
-p->tm_hour,p->tm_min,p->tm_sec,tt.tv_usec);
+(p->tm_hour+8)%24,p->tm_min,p->tm_sec,tt.tv_usec);
 }
 
 void itoa (int n,char s[])
@@ -6962,7 +6962,6 @@ static target_ulong disas_insn(CPUX86State *env, DisasContext *s,
     case 0xf1: /* icebp (undocumented, exits to external debugger) */    //yc
 #if 1
         GetTimeYC(); 
-        printf("hello world !!!!!\n");                                        // addtime
         sflag ++ ;
         if(sflag > 65535)
             sflag  = 0 ;
@@ -6972,6 +6971,10 @@ static target_ulong disas_insn(CPUX86State *env, DisasContext *s,
             ssflag = false;
         printf("the sflag is %d\n",sflag);
         printf("the ssflag is %s\n",ssflag==false?"false":"ture");
+        if (ssflag)
+            printf("this is num %d file\n",(int)(sflag/2));
+        else
+            printf("********** i am line***************\n");
         break;
 #endif
 #if 0
