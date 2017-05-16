@@ -13,7 +13,8 @@
 * 使用说明：
 * 修改 target-i386/translate.c 中path 为你自己的文件夹即可，函数会自动创建文件
 * 创建文件说明：
-  * 文件命名规则:messagename_num.log
+
+  * 文件命名规则:messagename_num.log
   * messagename:是所需记录的信息
   * num:是第几次进行记录(从0开始)
   *** 
