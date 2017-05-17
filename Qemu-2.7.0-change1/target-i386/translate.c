@@ -104,9 +104,22 @@ void printf_debug(const char *Path,
 
     char *Temp = NULL;
     char str[25];
+    char str1[25];
     //Temp = (char*)malloc(sizeof(char)*1024);
     Temp = (char*)calloc(1024,sizeof(char*));
     itoa(num,str);
+    if (strlen(str) == 2){
+            char temp;
+            temp = str[0];
+            str[0] = str[1];
+            str[1] = temp;
+        }
+    if (strlen(str) == 3){
+           char temp;
+           temp = str[0];
+           str[0] = str[2];
+           str[2] = temp;
+       }
     strcat (Temp,Path);
     strcat (Temp,name);
     strcat (Temp,"_");
