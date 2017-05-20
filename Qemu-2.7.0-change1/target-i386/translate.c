@@ -4478,11 +4478,17 @@ static target_ulong disas_insn(CPUX86State *env, DisasContext *s,
         printf_debug(PATH,1,(int)env->cr[3],"cr3",(int)(sflag/2));  // yc  
         printf_debug(PATH,1,(int)env->cr[4],"cr4",(int)(sflag/2));  // yc  
         /* bnd[4]*/
-#if 0
-        printf_debug(PATH,1,(int)env->bnd_regs[0],"bnd_reg0",(int)(sflag/2));  // yc  
-        printf_debug(PATH,1,(int)env->bnd_regs[1],"bnd_reg1",(int)(sflag/2));  // yc  
-        printf_debug(PATH,1,(int)env->bnd_regs[2],"bnd_reg2",(int)(sflag/2));  // yc  
-        printf_debug(PATH,1,(int)env->bnd_regs[3],"bnd_reg3",(int)(sflag/2));  // yc  
+#if 1 //
+        printf_debug(PATH,1,(int)(env->bnd_regs[0]).lb,"bnd_reg0",(int)(sflag/2));  // yc  
+#endif
+#if 1
+        printf_debug(PATH,1,(int)(env->bnd_regs[0]).ub,"bnd_reg0",(int)(sflag/2));  // yc  
+        printf_debug(PATH,1,(int)(env->bnd_regs[1]).lb,"bnd_reg1",(int)(sflag/2));  // yc  
+        printf_debug(PATH,1,(int)(env->bnd_regs[1]).ub,"bnd_reg1",(int)(sflag/2));  // yc  
+        printf_debug(PATH,1,(int)(env->bnd_regs[2]).lb,"bnd_reg2",(int)(sflag/2));  // yc  
+        printf_debug(PATH,1,(int)(env->bnd_regs[2]).ub,"bnd_reg2",(int)(sflag/2));  // yc  
+        printf_debug(PATH,1,(int)(env->bnd_regs[3]).lb,"bnd_reg3",(int)(sflag/2));  // yc  
+        printf_debug(PATH,1,(int)(env->bnd_regs[3]).ub,"bnd_reg3",(int)(sflag/2));  // yc  
 #endif
         /* msr_global_status*/
         printf_debug(PATH,1,env->msr_global_status,"msr_global_status",(int)(sflag/2));  // yc  
