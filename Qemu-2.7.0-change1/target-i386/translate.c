@@ -4520,6 +4520,9 @@ static target_ulong disas_insn(CPUX86State *env, DisasContext *s,
     s->vex_v = 0;
  next_byte:
     b = cpu_ldub_code(env, s->pc);
+    if (ssflag){
+        printf_debug(PATH,1,b,"opc",(int)(sflag/2));  // yc  
+}
     s->pc++;
     /* Collect prefixes.  */
     switch (b) {
