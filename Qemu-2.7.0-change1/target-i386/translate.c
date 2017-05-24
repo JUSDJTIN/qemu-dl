@@ -63,12 +63,12 @@
 #include "my_debug.h"
 int sflag = 0;
 bool ssflag = false;
-//char * PATH ="/home/yc/CAS/log/";
-//extern const char * PATH;
+//char * SAVEPATH ="/home/yc/CAS/log/";
+//extern const char * SAVEPATH;
 
 #if 0
-char * PATH_call ="/home/yc/CAS/log/test.log";
-char * PATH_eflag ="/home/yc/CAS/log/eflag.log";
+char * SAVEPATH_call ="/home/yc/CAS/log/test.log";
+char * SAVEPATH_eflag ="/home/yc/CAS/log/eflag.log";
 #endif
 
 //void GetTimeYC(void);
@@ -4457,40 +4457,40 @@ static target_ulong disas_insn(CPUX86State *env, DisasContext *s,
     int rex_w, rex_r;
     if (ssflag){
 
-        printf_debug(PATH,debugallow,pc_start,"PC_start",(int)(sflag/2));   // yc  pc
-        printf_debug(PATH,1,env->eflags,"eflags",(int)(sflag/2));  // yc eflags  
-        printf_debug(PATH,1,env->eip,"eip",(int)(sflag/2));  // yc eip 
+        printf_debug(SAVEPATH,saveallow,pc_start,"PC_start",(int)(sflag/2));   // yc  pc
+        printf_debug(SAVEPATH,saveallow,env->eflags,"eflags",(int)(sflag/2));  // yc eflags  
+        printf_debug(SAVEPATH,saveallow,env->eip,"eip",(int)(sflag/2));  // yc eip 
         /* cr[5]*/
-        printf_debug(PATH,1,(int)env->cr[0],"cr0",(int)(sflag/2));  // yc cr[5] 
-        printf_debug(PATH,1,(int)env->cr[2],"cr2",(int)(sflag/2));  // yc  
-        printf_debug(PATH,1,(int)env->cr[3],"cr3",(int)(sflag/2));  // yc  
-        printf_debug(PATH,1,(int)env->cr[4],"cr4",(int)(sflag/2));  // yc  
+        printf_debug(SAVEPATH,saveallow,(int)env->cr[0],"cr0",(int)(sflag/2));  // yc cr[5] 
+        printf_debug(SAVEPATH,saveallow,(int)env->cr[2],"cr2",(int)(sflag/2));  // yc  
+        printf_debug(SAVEPATH,saveallow,(int)env->cr[3],"cr3",(int)(sflag/2));  // yc  
+        printf_debug(SAVEPATH,saveallow,(int)env->cr[4],"cr4",(int)(sflag/2));  // yc  
         /* bnd[4]*/
 #if 1 //
-        printf_debug(PATH,1,(int)(env->bnd_regs[0]).lb,"bnd_reg0",(int)(sflag/2));  // yc  
+        printf_debug(SAVEPATH,saveallow,(int)(env->bnd_regs[0]).lb,"bnd_reg0",(int)(sflag/2));  // yc  
 #endif
 #if 1
-        printf_debug(PATH,1,(int)(env->bnd_regs[0]).ub,"bnd_reg0",(int)(sflag/2));  // yc  
-        printf_debug(PATH,1,(int)(env->bnd_regs[1]).lb,"bnd_reg1",(int)(sflag/2));  // yc  
-        printf_debug(PATH,1,(int)(env->bnd_regs[1]).ub,"bnd_reg1",(int)(sflag/2));  // yc  
-        printf_debug(PATH,1,(int)(env->bnd_regs[2]).lb,"bnd_reg2",(int)(sflag/2));  // yc  
-        printf_debug(PATH,1,(int)(env->bnd_regs[2]).ub,"bnd_reg2",(int)(sflag/2));  // yc  
-        printf_debug(PATH,1,(int)(env->bnd_regs[3]).lb,"bnd_reg3",(int)(sflag/2));  // yc  
-        printf_debug(PATH,1,(int)(env->bnd_regs[3]).ub,"bnd_reg3",(int)(sflag/2));  // yc  
+        printf_debug(SAVEPATH,saveallow,(int)(env->bnd_regs[0]).ub,"bnd_reg0",(int)(sflag/2));  // yc  
+        printf_debug(SAVEPATH,saveallow,(int)(env->bnd_regs[1]).lb,"bnd_reg1",(int)(sflag/2));  // yc  
+        printf_debug(SAVEPATH,saveallow,(int)(env->bnd_regs[1]).ub,"bnd_reg1",(int)(sflag/2));  // yc  
+        printf_debug(SAVEPATH,saveallow,(int)(env->bnd_regs[2]).lb,"bnd_reg2",(int)(sflag/2));  // yc  
+        printf_debug(SAVEPATH,saveallow,(int)(env->bnd_regs[2]).ub,"bnd_reg2",(int)(sflag/2));  // yc  
+        printf_debug(SAVEPATH,saveallow,(int)(env->bnd_regs[3]).lb,"bnd_reg3",(int)(sflag/2));  // yc  
+        printf_debug(SAVEPATH,saveallow,(int)(env->bnd_regs[3]).ub,"bnd_reg3",(int)(sflag/2));  // yc  
 #endif
         /* msr_global_status*/
-        printf_debug(PATH,1,env->msr_global_status,"msr_global_status",(int)(sflag/2));  // yc  
+        printf_debug(SAVEPATH,saveallow,env->msr_global_status,"msr_global_status",(int)(sflag/2));  // yc  
 
         /* cpuid level */
-        printf_debug(PATH,1,env->cpuid_level,"cpuid_level",(int)(sflag/2));  // yc  
+        printf_debug(SAVEPATH,saveallow,env->cpuid_level,"cpuid_level",(int)(sflag/2));  // yc  
 
         /* mcg_status */
-        printf_debug(PATH,1,env->mcg_status,"mcg_status",(int)(sflag/2)); // yc  
+        printf_debug(SAVEPATH,saveallow,env->mcg_status,"mcg_status",(int)(sflag/2)); // yc  
         }
 
 #if 0
-        printf_debug(PATH_call,1,pc_start,"pc");   // yc  pc
-        printf_debug(PATH_eflag,1,env->eflags,"eflags");}  // yc eflags  
+        printf_debug(SAVEPATH_call,1,pc_start,"pc");   // yc  pc
+        printf_debug(SAVEPATH_eflag,1,env->eflags,"eflags");}  // yc eflags  
 #endif
 
     s->pc_start = s->pc = pc_start;
@@ -4509,7 +4509,7 @@ static target_ulong disas_insn(CPUX86State *env, DisasContext *s,
  next_byte:
     b = cpu_ldub_code(env, s->pc);
     if (ssflag){
-        printf_debug(PATH,1,b,"opc",(int)(sflag/2));  // yc  
+        printf_debug(SAVEPATH,saveallow,b,"opc",(int)(sflag/2));  // yc  
 }
     s->pc++;
     /* Collect prefixes.  */
@@ -6496,9 +6496,9 @@ static target_ulong disas_insn(CPUX86State *env, DisasContext *s,
            // printf("the file is translate.c\n");
           //  printf("call next_ip is %x\n",next_eip);
         if (ssflag){
-        printf_debug(PATH,1,next_eip,"call_im",(int)(sflag/2));}  // yc  
+        printf_debug(SAVEPATH,saveallow,next_eip,"call_im",(int)(sflag/2));}  // yc  
 #ifdef DEBUG_QEMU_TRANS_NODE
-            printf_debug(PATH,1,next_eip);   // yc 
+            printf_debug(SAVEPATH,1,next_eip);   // yc 
 #endif
 
             if (dflag == MO_16) {
@@ -6525,7 +6525,7 @@ static target_ulong disas_insn(CPUX86State *env, DisasContext *s,
             tcg_gen_movi_tl(cpu_T0, selector);
             tcg_gen_movi_tl(cpu_T1, offset);
             if(ssflag){ 
-            printf_debug(PATH,1,offset,"lcall_im",(int)(sflag/2));}  // yc  
+            printf_debug(SAVEPATH,saveallow,offset,"lcall_im",(int)(sflag/2));}  // yc  
         }
         goto do_lcall;
     case 0xe9: /* jmp im */
@@ -6543,7 +6543,7 @@ static target_ulong disas_insn(CPUX86State *env, DisasContext *s,
         gen_bnd_jmp(s);
         gen_jmp(s, tval);
         if (ssflag){
-        printf_debug(PATH,1,tval,"jmp_im",(int)(sflag/2));}  // yc  
+        printf_debug(SAVEPATH,saveallow,tval,"jmp_im",(int)(sflag/2));}  // yc  
         break;
     case 0xea: /* ljmp im */
         {
@@ -6558,7 +6558,7 @@ static target_ulong disas_insn(CPUX86State *env, DisasContext *s,
             tcg_gen_movi_tl(cpu_T0, selector);
             tcg_gen_movi_tl(cpu_T1, offset);
             if (ssflag){ 
-            printf_debug(PATH,1,offset,"ljmp_im",(int)(sflag/2));}  // yc  
+            printf_debug(SAVEPATH,saveallow,offset,"ljmp_im",(int)(sflag/2));}  // yc  
         }
         goto do_ljmp;
     case 0xeb: /* jmp Jb */

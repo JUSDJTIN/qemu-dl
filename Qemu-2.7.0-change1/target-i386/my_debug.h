@@ -20,13 +20,13 @@
 //                  int DebugAllow, signed int NeedData);
 
 /*********************SHADOW_STACK CONFIG***************************/
-#define SHADOW_STACK                    0    //yc 
+#define SHADOWSTACK                     0    //yc 
 #define SAFEINS                         0 
 
 /*********************SAVE MESSAGE CONFIG***************************/
-#define debugallow 1
+#define saveallow 1
 
-const char * PATH ="/home/yc/CAS/log/";
+const char * SAVEPATH ="/home/yc/CAS/log/";
 
 static inline void itoa (int n,char s[])
 {

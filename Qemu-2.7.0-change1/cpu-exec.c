@@ -35,7 +35,7 @@
 #include "sysemu/replay.h"
 
 /******************************yc start***************************/
-
+#include "target-i386/shadow.h"
 #if SHADOWSTACK 
     ShadowStack ss1;
     bool cpuexeflag = 1
@@ -372,9 +372,6 @@ static inline TranslationBlock *tb_find_fast(CPUState *cpu,
     TranslationBlock *tb;
     target_ulong cs_base, pc;
     uint32_t flags;
-#ifdef CPU_EXEC
-   // printf_debug(PATH_call,1,2);   //yc 
-#endif
     /* we record a subset of the CPU state. It will
        always be the same before a given translated block
        is executed. */
