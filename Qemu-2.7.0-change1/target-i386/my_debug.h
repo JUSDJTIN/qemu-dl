@@ -49,7 +49,7 @@ static inline void printf_debug(const char  *Path,
                   int DebugAllow, signed int NeedData,const char * name,int num) 
 {
     int error; 
-    if (DebugAllow == 0) 
+    if (unlikely(DebugAllow == 0)) 
         return ;
     struct timeval tt;
     struct tm* p;
@@ -91,7 +91,7 @@ static inline void printf_debug(const char  *Path,
     sprintf(s, "%s is 0x%x time is %d/%d/%d %d:%d:%d:%ld\n",name,NeedData,(1900+p->tm_year),(1+p->tm_mon),p->tm_mday,
 (p->tm_hour+8)%24,p->tm_min,p->tm_sec,tt.tv_usec);
     error = write(fd,s,strlen(s));
-    if (error == 0){
+    if (unlikely(error == 0)){
         printf("[error]: write file error");
         return;
     }
