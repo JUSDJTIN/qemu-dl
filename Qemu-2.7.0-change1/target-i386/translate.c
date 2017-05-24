@@ -60,34 +60,20 @@
 
 /******************************mycode start***************************/
 
-//#include "my_debug.h"
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <string.h>
-#include <fcntl.h>
-#include <sys/time.h>
+#include "my_debug.h"
+int sflag = 0;
+bool ssflag = false;
 //char * PATH ="/home/yc/CAS/log/";
-
-# define debugallow  1
-# define update_yc  1
-# define old_yc 0 
-
-//#ifdef update_yc 
-char *PATH= "/home/yc/CAS/log/";
-//#endif
+//extern const char * PATH;
 
 #if 0
 char * PATH_call ="/home/yc/CAS/log/test.log";
 char * PATH_eflag ="/home/yc/CAS/log/eflag.log";
 #endif
 
-int sflag = 0;
-bool ssflag = false;
-
-void GetTimeYC(void);
-void itoa (int n,char s[]); // int to char 
+//void GetTimeYC(void);
+//void itoa (int n,char s[]); // int to char 
+#if 0
 void printf_debug(const char *Path,
                   int DebugAllow, signed int NeedData, char* name,int num) 
 {
@@ -145,6 +131,7 @@ void printf_debug(const char *Path,
     Temp = NULL;
     close(fd);
 }
+
 void GetTimeYC(void)
 {
 
@@ -176,6 +163,7 @@ for(j=i;j>=0;j--)//生成的数字是逆序的，所以要逆序输出
 }
 //#endif
 
+#endif
 /******************************mycode end***************************/
 
 /* For a switch indexed by MODRM, match all memory operands for a given OP.  */
@@ -4469,7 +4457,7 @@ static target_ulong disas_insn(CPUX86State *env, DisasContext *s,
     int rex_w, rex_r;
     if (ssflag){
 
-        printf_debug(PATH,1,pc_start,"PC_start",(int)(sflag/2));   // yc  pc
+        printf_debug(PATH,debugallow,pc_start,"PC_start",(int)(sflag/2));   // yc  pc
         printf_debug(PATH,1,env->eflags,"eflags",(int)(sflag/2));  // yc eflags  
         printf_debug(PATH,1,env->eip,"eip",(int)(sflag/2));  // yc eip 
         /* cr[5]*/

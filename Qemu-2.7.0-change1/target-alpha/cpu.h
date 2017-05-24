@@ -510,7 +510,7 @@ static inline void cpu_get_tb_cpu_state(CPUAlphaState *env, target_ulong *pc,
 
     *pc = env->pc;
     // yc add the pc 
-    printf("the pc is %x",*pc);  // yc 
+   // printf("the pc is %x",*pc);  // yc 
     *cs_base = 0;
 
     if (env->pal_mode) {
