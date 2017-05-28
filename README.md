@@ -1,9 +1,3 @@
-### this is a homework
-* record the pc ...
-* how to use 
-  * sudo ./configure
-  * sudo make && make install 
-  ***
 ### 更新说明(1.0)：
 * 修改记录函数
 * 添加所需要的记录信息
