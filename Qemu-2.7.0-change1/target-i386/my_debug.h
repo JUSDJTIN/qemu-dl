@@ -22,9 +22,9 @@
 /*********************SHADOW_STACK CONFIG***************************/
 #define SHADOWSTACK                     0    //yc 
 #define SAFEINS                         0 
-
 /*********************SAVE MESSAGE CONFIG***************************/
 #define saveallow 1
+#define SHOWFLAG  0   // show flag message
 
 const char * SAVEPATH ="/home/yc/CAS/log/";
 

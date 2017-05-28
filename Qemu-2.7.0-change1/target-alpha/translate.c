@@ -2907,7 +2907,7 @@ void gen_intermediate_code(CPUAlphaState *env, struct TranslationBlock *tb)
     ctx.tb_ftz = -1;
 
     num_insns = 0;
-    max_insns = tb->cflags & CF_COUNT_MASK;
+    max_insns = tb->cflags & CF_COUNT_MASK; // CF_COUNT_MASK=0x7fff
     if (max_insns == 0) {
         max_insns = CF_COUNT_MASK;
     }

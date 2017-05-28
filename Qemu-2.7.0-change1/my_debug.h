@@ -2,8 +2,8 @@
 /******************debug config******************/
 
 #define DEBUG_QEMU_TRANS_MODE           1
-
 #define  ALLOW_CALL_OPEN                1
+#define  SHOWFLAG                       1
 
 #include <stdio.h>
 #include <stdlib.h>

@@ -61,19 +61,17 @@
 /******************************mycode start***************************/
 
 #include "my_debug.h"
+
 int sflag = 0;
+int flag0xd6 =0;
 bool ssflag = false;
-//char * SAVEPATH ="/home/yc/CAS/log/";
-//extern const char * SAVEPATH;
+bool ddflag = false;
 
 #if 0
 char * SAVEPATH_call ="/home/yc/CAS/log/test.log";
 char * SAVEPATH_eflag ="/home/yc/CAS/log/eflag.log";
-#endif
-
 //void GetTimeYC(void);
 //void itoa (int n,char s[]); // int to char 
-#if 0
 void printf_debug(const char *Path,
                   int DebugAllow, signed int NeedData, char* name,int num) 
 {
@@ -2783,7 +2781,9 @@ static const SSEFunc_0_epp sse_op_table1[256][4] = {
     [0xd3] = MMX_OP2(psrlq),
     [0xd4] = MMX_OP2(paddq),
     [0xd5] = MMX_OP2(pmullw),
-    [0xd6] = { NULL, SSE_SPECIAL, SSE_SPECIAL, SSE_SPECIAL },
+    [0xd6] = { NULL, SSE_SPECIAL, SSE_SPECIAL, SSE_SPECIAL },  // yc 
+    //[0xd6] = {SSE_SPECIAL},  // yc 
+    //[0xd6] = MMX_OP2(psubusb),
     [0xd7] = { SSE_SPECIAL, SSE_SPECIAL }, /* pmovmskb */
     [0xd8] = MMX_OP2(psubusb),
     [0xd9] = MMX_OP2(psubusw),
@@ -4455,7 +4455,7 @@ static target_ulong disas_insn(CPUX86State *env, DisasContext *s,
     int modrm, reg, rm, mod, op, opreg, val;
     target_ulong next_eip, tval;
     int rex_w, rex_r;
-    if (ssflag){
+    if (ssflag&&ddflag){
 
         printf_debug(SAVEPATH,saveallow,pc_start,"PC_start",(int)(sflag/2));   // yc  pc
         printf_debug(SAVEPATH,saveallow,env->eflags,"eflags",(int)(sflag/2));  // yc eflags  
@@ -4508,7 +4508,7 @@ static target_ulong disas_insn(CPUX86State *env, DisasContext *s,
     s->vex_v = 0;
  next_byte:
     b = cpu_ldub_code(env, s->pc);
-    if (ssflag){
+    if (ssflag&&ddflag){
         printf_debug(SAVEPATH,saveallow,b,"opc",(int)(sflag/2));  // yc  
 }
     s->pc++;
@@ -6495,7 +6495,7 @@ static target_ulong disas_insn(CPUX86State *env, DisasContext *s,
            // printf("###############################\n");
            // printf("the file is translate.c\n");
           //  printf("call next_ip is %x\n",next_eip);
-        if (ssflag){
+        if (ssflag&&ddflag){
         printf_debug(SAVEPATH,saveallow,next_eip,"call_im",(int)(sflag/2));}  // yc  
 #ifdef DEBUG_QEMU_TRANS_NODE
             printf_debug(SAVEPATH,1,next_eip);   // yc 
@@ -6524,7 +6524,7 @@ static target_ulong disas_insn(CPUX86State *env, DisasContext *s,
 
             tcg_gen_movi_tl(cpu_T0, selector);
             tcg_gen_movi_tl(cpu_T1, offset);
-            if(ssflag){ 
+            if(ssflag&&ddflag){ 
             printf_debug(SAVEPATH,saveallow,offset,"lcall_im",(int)(sflag/2));}  // yc  
         }
         goto do_lcall;
@@ -6542,7 +6542,7 @@ static target_ulong disas_insn(CPUX86State *env, DisasContext *s,
         }
         gen_bnd_jmp(s);
         gen_jmp(s, tval);
-        if (ssflag){
+        if (ssflag&&ddflag){
         printf_debug(SAVEPATH,saveallow,tval,"jmp_im",(int)(sflag/2));}  // yc  
         break;
     case 0xea: /* ljmp im */
@@ -6557,7 +6557,7 @@ static target_ulong disas_insn(CPUX86State *env, DisasContext *s,
 
             tcg_gen_movi_tl(cpu_T0, selector);
             tcg_gen_movi_tl(cpu_T1, offset);
-            if (ssflag){ 
+            if (ssflag&&ddflag){ 
             printf_debug(SAVEPATH,saveallow,offset,"ljmp_im",(int)(sflag/2));}  // yc  
         }
         goto do_ljmp;
@@ -6971,20 +6971,36 @@ static target_ulong disas_insn(CPUX86State *env, DisasContext *s,
 //#ifdef WANT_ICEBP
     case 0xf1: /* icebp (undocumented, exits to external debugger) */    //yc
 #if 1
-        GetTimeYC(); 
         sflag ++ ;
+        if (flag0xd6 != sflag)
+           {
+#if SHOWFLAG
+            printf("this is a illegal operation!!!!\n");
+            printf("please delete num %d file !!!!\n",(int)(sflag/2));
+#endif
+            sflag --;
+            break;
+             }
         if(sflag > 65535)
             sflag  = 0 ;
         if (sflag % 2 == 1)
             ssflag = true;
         else
             ssflag = false;
+#if SHOWFLAG 
         printf("the sflag is %d\n",sflag);
         printf("the ssflag is %s\n",ssflag==false?"false":"ture");
+#endif
         if (ssflag)
-            printf("this is num %d file\n",(int)(sflag/2));
+           { 
+                GetTimeYC(); 
+                printf("this is num %d file\n",(int)(sflag/2));
+            }
         else
+          {  
+            GetTimeYC(); 
             printf("********** i am line***************\n");
+           }
         break;
 #endif
 #if 0
@@ -7078,12 +7094,28 @@ static target_ulong disas_insn(CPUX86State *env, DisasContext *s,
         }
         break;
     case 0xd6: /* salc */
+/*                add by  yc      */
+//        printf("i am 0xd6\n");
+        flag0xd6 ++ ;
+        if(flag0xd6 > 65535)
+            flag0xd6  = 0 ;
+        if (flag0xd6 % 2 == 1)
+            ddflag = true;
+        else
+            ddflag = false;
+#if SHOWFLAG 
+        printf("the flag0xd6 is %d\n",flag0xd6);
+        printf("the ddflag is %s\n",ddflag==false?"false":"ture");
+#endif
+        break;
+#if 0
         if (CODE64(s))
             goto illegal_op;
         gen_compute_eflags_c(s, cpu_T0);
         tcg_gen_neg_tl(cpu_T0, cpu_T0);
         gen_op_mov_reg_v(MO_8, R_EAX, cpu_T0);
         break;
+#endif
     case 0xe0: /* loopnz */
     case 0xe1: /* loopz */
     case 0xe2: /* loop */

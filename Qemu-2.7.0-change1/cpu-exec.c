@@ -153,12 +153,7 @@ static void init_delay_params(SyncClocks *sc,
 {
     if (!icount_align_option) {
         return;
-    }
-    sc->realtime_clock = qemu_clock_get_ns(QEMU_CLOCK_VIRTUAL_RT);
-    sc->diff_clk = qemu_clock_get_ns(QEMU_CLOCK_VIRTUAL) - sc->realtime_clock;
-    sc->last_cpu_icount = cpu->icount_extra + cpu->icount_decr.u16.low;
-    if (sc->diff_clk < max_delay) {
-        max_delay = sc->diff_clk;
+    } sc->realtime_clock = qemu_clock_get_ns(QEMU_CLOCK_VIRTUAL_RT); sc->diff_clk = qemu_clock_get_ns(QEMU_CLOCK_VIRTUAL) - sc->realtime_clock; sc->last_cpu_icount = cpu->icount_extra + cpu->icount_decr.u16.low; if (sc->diff_clk < max_delay) { max_delay = sc->diff_clk;
     }
     if (sc->diff_clk > max_advance) {
         max_advance = sc->diff_clk;
@@ -570,7 +565,7 @@ static inline void cpu_loop_exec_tb(CPUState *cpu, TranslationBlock *tb,
         return;
     }
 
-    trace_exec_tb(tb, tb->pc);
+    trace_exec_tb(tb, tb->pc);   // do nothing yc 
     ret = cpu_tb_exec(cpu, tb);
     *last_tb = (TranslationBlock *)(ret & ~TB_EXIT_MASK);
     *tb_exit = ret & TB_EXIT_MASK;
